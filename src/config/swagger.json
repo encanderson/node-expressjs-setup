@@ -1,0 +1,50 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Api",
+    "version": "1.0.0",
+    "contact": {
+      "email": "and.orisistem@gmail.com",
+      "url": "https://github.com/encanderson"
+    },
+    "description": "Api..."
+  },
+  "servers": [{ "url": "http://localhost:3000/api/v1" }],
+  "paths": {
+    "/": {
+      "post": {
+        "tags": [""],
+        "summary": "",
+        "description": "",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {}
+            }
+          }
+        },
+        "responses": {
+          "400": {
+            "description": "Error",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {}
+  }
+}
