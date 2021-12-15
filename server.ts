@@ -1,14 +1,25 @@
 import http from "http";
 require("express-async-errors");
 
-import app from "./src/api";
+import { App } from "./src/app";
 
 import { config } from "./src/config";
+class Server {
+  httpServer: http.Server;
+  app: App;
+  api;
+  constructor() {
+    this.app = new App();
+    this.app.start();
+  }
 
-const PORT = config.PORT;
+  init() {
+    this.httpServer = http.createServer(this.app.app);
 
-export const httpServer = http.createServer(app);
+    this.httpServer.listen(config.PORT, () => {
+      console.log(`Listening at ${config.PORT}`);
+    });
+  }
+}
 
-httpServer.listen(PORT, () => {
-  console.log(`Listening at ${PORT}`);
-});
+new Server().init();
