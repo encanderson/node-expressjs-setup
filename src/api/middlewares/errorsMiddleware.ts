@@ -1,7 +1,7 @@
 import express, { Request, Response, NextFunction } from "express";
 
 import { NotFound, UserExist, NotSupport } from "../errors";
-import { ErrorType } from "@src/@types/error";
+import { ErrorType } from "@src/types/error";
 
 export const errorMiddleware = (app: express.Application): void => {
   app.use(

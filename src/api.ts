@@ -3,7 +3,7 @@ import cors from "cors";
 
 import routes from "./routes";
 
-import { headersMiddleware, errorMiddleware } from "./middlewares";
+import { headersMiddleware, errorMiddleware } from "./api/middlewares";
 
 const app = express();
 

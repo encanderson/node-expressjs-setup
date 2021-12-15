@@ -1,7 +1,7 @@
 import express from "express";
 import redoc from "redoc-express";
 
-import { getSwagger } from "@src/controllers";
+import { getSwagger } from "@src/api/controllers";
 
 export const router = express.Router();
 
