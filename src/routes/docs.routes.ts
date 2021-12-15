@@ -3,7 +3,7 @@ import redoc from "redoc-express";
 
 import { getSwagger } from "@src/controllers";
 
-const router = express.Router();
+export const router = express.Router();
 
 router.get(
   "/",
@@ -14,5 +14,3 @@ router.get(
 );
 
 router.get("/swagger.json", getSwagger);
-
-module.exports = (app: express.Application) => app.use("/docs", router);

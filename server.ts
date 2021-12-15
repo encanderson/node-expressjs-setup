@@ -1,9 +1,9 @@
 import http from "http";
 require("express-async-errors");
 
-import app from "@src/api";
+import app from "./src/api";
 
-import { config } from "@src/config";
+import { config } from "./src/config";
 
 const PORT = config.PORT;
 

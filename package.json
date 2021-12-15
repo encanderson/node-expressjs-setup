@@ -8,7 +8,7 @@
   "scripts": {
     "build": "babel src --extensions \".js,.ts\" --out-dir dist --copy-files --no-copy-ignored",
     "start": "node dist/server.js",
-    "dev": "ts-node-dev -r tsconfig-paths/register --respawn --transpile-only --ignore-watch node_modules --no-notify --exit-child src/server.ts",
+    "dev": "ts-node-dev -r tsconfig-paths/register --respawn --transpile-only --ignore-watch node_modules --no-notify --exit-child server.ts",
     "test": "jest",
     "commit": "git-cz"
   },
@@ -40,7 +40,7 @@
     "jest": "^26.0.1",
     "prettier": "^2.0.5",
     "ts-jest": "^26.1.0",
-    "ts-node-dev": "^1.0.0-pre.49",
+    "ts-node-dev": "^1.1.8",
     "tsconfig-paths": "^3.9.0",
     "typescript": "^3.9.5"
   },

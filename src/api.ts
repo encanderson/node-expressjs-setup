@@ -1,8 +1,13 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
 import express, { json, urlencoded } from "express";
 import cors from "cors";
 
+import routes from "./routes";
+
+import { headersMiddleware, errorMiddleware } from "./middlewares";
+
 const app = express();
+
+headersMiddleware(app);
 
 app.use(cors());
 app.use(json());
@@ -12,6 +17,8 @@ app.use(
   })
 );
 
-require("@src/routes/docs.routes")(app);
+routes(app);
+
+errorMiddleware(app);
 
 export default app;
