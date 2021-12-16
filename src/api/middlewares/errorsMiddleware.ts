@@ -1,6 +1,6 @@
 import express, { Request, Response, NextFunction } from "express";
 
-import { NotFound, UserExist, NotSupport } from "../errors";
+import { NotFound, UserExist, NotSupport, NotAuthenticate } from "../errors";
 import { ErrorType } from "@src/types/error";
 
 export const errorMiddleware = (app: express.Application): void => {
@@ -19,6 +19,10 @@ export const errorMiddleware = (app: express.Application): void => {
 
       if (error instanceof NotSupport) {
         status = 406;
+      }
+
+      if (error instanceof NotAuthenticate) {
+        status = 401;
       }
 
       res.status(status).send({

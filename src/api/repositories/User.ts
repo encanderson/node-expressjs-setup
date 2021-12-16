@@ -32,6 +32,25 @@ export class UserModel {
     });
   }
 
+  static async getUser(email: string): Promise<UserType> {
+    const user = await prisma.userModel.findUnique({
+      where: {
+        email: email,
+      },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        password: true,
+      },
+    });
+    if (!user) {
+      return null;
+    }
+
+    return user;
+  }
+
   static async searchByEmail(newUser: UserType): Promise<UserModel> {
     const user = await prisma.userModel.findUnique({
       where: {
