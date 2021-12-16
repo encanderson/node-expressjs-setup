@@ -18,4 +18,18 @@ export class UsersController {
       next(error);
     }
   }
+
+  static async getAll(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      res.status(200).send({
+        user: req.user,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 }
