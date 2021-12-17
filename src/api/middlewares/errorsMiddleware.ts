@@ -6,6 +6,7 @@ import {
   NotSupport,
   NotAuthenticate,
   InvalidToken,
+  InvalidField,
 } from "../errors";
 import { ErrorType } from "@src/types/error";
 
@@ -29,6 +30,10 @@ export const errorMiddleware = (app: express.Application): void => {
 
       if (error instanceof NotAuthenticate || error instanceof InvalidToken) {
         status = 401;
+      }
+
+      if (error instanceof InvalidField) {
+        status = 400;
       }
 
       res.status(status).send({
