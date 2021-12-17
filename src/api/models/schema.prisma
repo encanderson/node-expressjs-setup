@@ -12,6 +12,7 @@ model UserModel {
   name        String
   email       String  @unique
   password    String
+  code        Int?
   createdAt   DateTime
   updatedAt   DateTime
 }

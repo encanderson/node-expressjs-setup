@@ -13,7 +13,7 @@ export const headersMiddleware = (app: express.Application): void => {
     const originalUrl = req.originalUrl;
 
     if (applicationFormat === "*/*") {
-      applicationFormat = "application/josn";
+      applicationFormat = "application/json";
     }
 
     if (

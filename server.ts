@@ -7,7 +7,6 @@ import { config } from "./src/config";
 class Server {
   httpServer: http.Server;
   app: App;
-  api;
   constructor() {
     this.app = new App();
     this.app.start();

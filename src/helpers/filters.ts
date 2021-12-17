@@ -1,4 +1,8 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+
 import { InvalidField } from "../api/errors";
+
+import { User } from "@src/types";
 
 export const filterObject = (obj: unknown, keys: string[]): unknown => {
   const newObject = {};
@@ -6,7 +10,7 @@ export const filterObject = (obj: unknown, keys: string[]): unknown => {
   return newObject;
 };
 
-export const filterInput = (obj: unknown, field: string[]): unknown => {
+export const filterInput = (obj: unknown, field: string[]): User => {
   const newObject = {};
   field.forEach((key) => {
     if (obj[key]) {
@@ -17,5 +21,7 @@ export const filterInput = (obj: unknown, field: string[]): unknown => {
       );
     }
   });
+
+  // @ts-ignore
   return newObject;
 };

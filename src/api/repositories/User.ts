@@ -3,7 +3,7 @@ import * as bcrypt from "bcrypt";
 
 import { User as UserType } from "@src/types";
 
-import { UserExist } from "@src/api/errors";
+import { UserExist, NotFound } from "@src/api/errors";
 
 const prisma = new PrismaClient();
 
@@ -68,5 +68,64 @@ export class UserModel {
     const salt = await bcrypt.genSalt(12);
     const hashed = await bcrypt.hash(password, salt);
     return hashed;
+  }
+
+  static async recoveryPassword(
+    email: string,
+    code: number
+  ): Promise<{ email: string; name: string }> {
+    const user = await prisma.userModel.findUnique({
+      where: {
+        email: email,
+      },
+      select: {
+        email: true,
+        name: true,
+      },
+    });
+    if (user) {
+      await prisma.userModel.update({
+        where: {
+          email: user.email,
+        },
+        data: {
+          code: code,
+        },
+      });
+      return user;
+    } else {
+      throw new NotFound("Usuário");
+    }
+  }
+
+  static async checkUser(email: string): Promise<{ code: number }> {
+    const user = await prisma.userModel.findUnique({
+      where: {
+        email: email,
+      },
+      select: {
+        code: true,
+      },
+    });
+    return user;
+  }
+
+  static async update(
+    email: string,
+    data: { password: string }
+  ): Promise<void> {
+    if (data.password) {
+      data.password = await UserModel.hashPassword(data.password);
+    }
+    try {
+      await prisma.userModel.update({
+        where: {
+          email: email,
+        },
+        data: data,
+      });
+    } catch (err) {
+      throw new NotFound("Usuário");
+    }
   }
 }

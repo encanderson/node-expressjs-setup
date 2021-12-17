@@ -1,40 +1,33 @@
-import passport from "passport";
-import { Strategy as LocalStrategy } from "passport-local";
-import { Strategy as BearerStrategy } from "passport-http-bearer";
+import { UserModel } from "../repositories";
 
-import { verifyUser, comparePassword, verifyToken } from "@src/utils";
+import { NotAuthenticate } from "@src/api/errors";
 
-passport.use(
-  new LocalStrategy(
-    {
-      usernameField: "email",
-      passwordField: "password",
-    },
-    async (email, password, done) => {
-      try {
-        const user = await verifyUser(email);
-        await comparePassword(password, user.password);
+import { sendCode } from "../subscribers";
+import { generateCode } from "@src/helpers";
 
-        delete user.password;
-        done(null, user);
-      } catch (err) {
-        done(err);
+export class AuthServices {
+  static async recoveryPassword(email: string): Promise<void> {
+    const code = generateCode();
+
+    const user = await UserModel.recoveryPassword(email, code);
+
+    await sendCode(user.email, code);
+  }
+  static async checkUser(email: string, code: number): Promise<unknown> {
+    const user = await UserModel.checkUser(email);
+
+    if (user) {
+      if (user.code === code) {
+        return true;
+      } else {
+        throw new NotAuthenticate("Código");
       }
     }
-  )
-);
-
-passport.use(
-  new BearerStrategy(async (token, done) => {
-    try {
-      const userId = verifyToken(token);
-      done(null, userId);
-    } catch (err) {
-      done(err);
-    }
-  })
-);
-
-module.exports = {
-  initialize: () => passport.initialize(),
-};
+  }
+  static async changePassword(
+    email: string,
+    data: { password: string }
+  ): Promise<void> {
+    await UserModel.update(email, data);
+  }
+}

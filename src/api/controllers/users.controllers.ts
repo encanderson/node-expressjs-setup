@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 
-import { createUser } from "../services";
+import { UsersServices } from "../services";
 
 export class UsersController {
   static async create(
@@ -10,7 +10,7 @@ export class UsersController {
   ): Promise<void> {
     try {
       const user = req.body;
-      await createUser(user);
+      await UsersServices.createUser(user);
       res.status(201).send({
         message: `Seja bem vindo ${user.name}`,
       });

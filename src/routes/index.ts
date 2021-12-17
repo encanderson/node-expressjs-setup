@@ -6,8 +6,8 @@ import { router as authRouter } from "./auth.routes";
 
 const routes = (app: express.Application): void => {
   app.use("/docs", docsRouter);
-  app.use("/api/v1", userRouter);
   app.use("/api/v1/auth", authRouter);
+  app.use("/api/v1", userRouter);
 };
 
 export default routes;

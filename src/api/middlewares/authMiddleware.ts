@@ -39,8 +39,6 @@ export const authenticationMiddleware = async (
   next: NextFunction
 ): Promise<void> => {
   passport.authenticate("bearer", { session: false }, (error, userId) => {
-    if (req.path === "/users/create") return next();
-
     if (error && error.name === "InvalidToken") {
       return res.status(401).send({ message: error.message });
     }
