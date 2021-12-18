@@ -2,7 +2,6 @@ import { Request, Response, NextFunction } from "express";
 import passport from "passport";
 
 import { generateToken } from "@src/utils";
-import { NotAuthenticate } from "../errors";
 
 export const loginMiddleware = async (
   req: Request,
@@ -41,16 +40,12 @@ export const authenticationMiddleware = async (
   passport.authenticate(
     "bearer",
     { session: false },
-    async (error, userId, token) => {
+    (error, userId, token) => {
       if (error && error.name === "InvalidToken") {
         return res.status(401).send({ message: error.message });
       }
       if (error) {
         return res.status(500).send({ message: error.message });
-      }
-
-      if (!userId) {
-        throw new NotAuthenticate("Token");
       }
 
       req.user = {
