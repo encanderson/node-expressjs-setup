@@ -14,6 +14,20 @@ export class AuthController {
     }
   }
 
+  static async logout(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const token = req.user.token;
+      await AuthServices.logout(token);
+      res.status(204).end();
+    } catch (err) {
+      next(err);
+    }
+  }
+
   static async recoveryPassword(
     req: Request,
     res: Response,

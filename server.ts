@@ -4,6 +4,8 @@ require("express-async-errors");
 import { App } from "./src/app";
 
 import { config } from "./src/config";
+
+require("./src/redis");
 class Server {
   httpServer: http.Server;
   app: App;
@@ -12,7 +14,7 @@ class Server {
     this.app.start();
   }
 
-  init() {
+  start() {
     this.httpServer = http.createServer(this.app.app);
 
     this.httpServer.listen(config.PORT, () => {
@@ -21,4 +23,4 @@ class Server {
   }
 }
 
-new Server().init();
+new Server().start();

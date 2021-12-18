@@ -2,7 +2,8 @@ import passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
 import { Strategy as BearerStrategy } from "passport-http-bearer";
 
-import { verifyUser, comparePassword, verifyToken } from "@src/utils";
+import { verifyToken, UserVerification } from "@src/utils";
+import { Blocklist } from "../subscribers";
 
 passport.use(
   new LocalStrategy(
@@ -12,8 +13,8 @@ passport.use(
     },
     async (email, password, done) => {
       try {
-        const user = await verifyUser(email);
-        await comparePassword(password, user.password);
+        const user = await UserVerification.verifyUser(email);
+        await UserVerification.comparePassword(password, user.password);
 
         delete user.password;
         done(null, user);
@@ -27,8 +28,9 @@ passport.use(
 passport.use(
   new BearerStrategy(async (token, done) => {
     try {
+      await Blocklist.verifyToken(token);
       const userId = verifyToken(token);
-      done(null, userId);
+      done(null, userId, token);
     } catch (err) {
       done(err);
     }
