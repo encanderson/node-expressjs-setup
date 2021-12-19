@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import passport from "passport";
 
 import { UserModel } from "@src/api/repositories";
-import { UserToken } from "@src/utils";
+import { RefreshToken, AccessToken } from "@src/utils";
 import { NotAuthenticate } from "../errors";
 
 export class AuthMiddleware {
@@ -22,7 +22,7 @@ export class AuthMiddleware {
         return res.status(401).send({ message: info });
       }
 
-      const token = UserToken.generateToken(user.email);
+      const token = AccessToken.generateToken(user.email, "15m");
       req.user = {
         ...user,
         token,
@@ -68,15 +68,13 @@ export class AuthMiddleware {
     try {
       const { refreshToken } = req.body;
 
-      const { userId, token } = await UserToken.verifyRefreshToken(
-        refreshToken
-      );
+      const { userId, token } = await RefreshToken.verifyToken(refreshToken);
 
       const user = await UserModel.getUser(userId);
 
       delete user.password;
 
-      await UserToken.deleteRefreshToken(refreshToken);
+      await RefreshToken.deleteToken(refreshToken);
 
       req.user = user;
       req.user.token = token;

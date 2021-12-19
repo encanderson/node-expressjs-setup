@@ -5,5 +5,5 @@ import { AuthMiddleware } from "@src/api/middlewares";
 
 export const router = express.Router();
 
-router.post("/users/create", UsersController.create);
+router.post("/users", UsersController.create);
 router.get("/users", AuthMiddleware.authenticate, UsersController.getAll);
