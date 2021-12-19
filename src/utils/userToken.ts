@@ -41,4 +41,21 @@ export class UserToken {
     await managerAllowlist.setKey(refreshToken, userId, expirationDate);
     return { refreshToken, expirationDate };
   }
+
+  static async verifyRefreshToken(refreshToken: string): Promise<string> {
+    if (!refreshToken) {
+      throw new InvalidToken("Refresh Token não informado");
+    }
+    const userId = await managerAllowlist.getKey(refreshToken);
+
+    if (!userId) {
+      throw new InvalidToken("Refresh Token inválido");
+    }
+
+    return userId;
+  }
+
+  static async deleteRefreshToken(refreshToken: string): Promise<void> {
+    await managerAllowlist.delete(refreshToken);
+  }
 }

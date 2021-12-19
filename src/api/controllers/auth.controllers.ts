@@ -21,7 +21,8 @@ export class AuthController {
   ): Promise<void> {
     try {
       const token = req.user.token;
-      await AuthServices.logout(token);
+      const refreshToken = req.body.refreshToken;
+      await AuthServices.logout(token, refreshToken);
       res.status(204).end();
     } catch (err) {
       next(err);

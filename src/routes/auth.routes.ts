@@ -2,12 +2,17 @@ import express from "express";
 
 import { AuthController } from "../api/controllers";
 
-import { loginMiddleware, authenticationMiddleware } from "../api/middlewares";
+import { AuthMiddleware } from "../api/middlewares";
 
 export const router = express.Router();
 
-router.post("/login", loginMiddleware, AuthController.signIn);
+router.post("/login", AuthMiddleware.signIn, AuthController.signIn);
+router.post(
+  "/refresh-token",
+  AuthMiddleware.refreshToken,
+  AuthController.signIn
+);
 router.post("/recovery-password", AuthController.recoveryPassword);
 router.post("/check-user", AuthController.checkUser);
 router.put("/recovery-password", AuthController.changePassword);
-router.get("/logout", authenticationMiddleware, AuthController.logout);
+router.post("/logout", AuthMiddleware.authenticate, AuthController.logout);

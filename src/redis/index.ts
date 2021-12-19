@@ -1,6 +1,8 @@
 import { promisify } from "util";
 import * as redis from "redis";
 
+import { NotFound } from "@src/api/errors";
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const managerList = (list: redis): any => {
   const setAsync = promisify(list.set).bind(list);
@@ -24,6 +26,10 @@ export const managerList = (list: redis): any => {
     },
 
     async delete(key: string) {
+      if (!key) {
+        throw new NotFound("Refresh Token");
+      }
+
       await delAsync(key);
     },
   };

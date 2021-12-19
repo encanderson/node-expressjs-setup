@@ -1,3 +1,3 @@
-export * from "./headersMiddleware";
-export * from "./errorsMiddleware";
-export * from "./authMiddleware";
+export * from "./headers.middleware";
+export * from "./errors.middleware";
+export * from "./auth.middleware";

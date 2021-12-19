@@ -38,7 +38,6 @@ export const errorMiddleware = (app: express.Application): void => {
 
       res.status(status).send({
         message: error.message,
-        idError: error.idError,
       });
     }
   );

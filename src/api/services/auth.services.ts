@@ -4,7 +4,7 @@ import { NotAuthenticate } from "@src/api/errors";
 
 import { sendCode } from "../subscribers";
 import { generateCode } from "@src/helpers";
-import { Blocklist } from "../subscribers";
+import { Blocklist, managerAllowlist } from "../subscribers";
 
 export class AuthServices {
   static async recoveryPassword(email: string): Promise<void> {
@@ -32,11 +32,9 @@ export class AuthServices {
     await UserModel.update(email, data);
   }
 
-  static async logout(token: string): Promise<void> {
-    try {
-      await Blocklist.setToken(token);
-    } catch (err) {
-      throw new Error(err);
-    }
+  static async logout(token: string, refreshToken: string): Promise<void> {
+    await managerAllowlist.delete(refreshToken);
+
+    await Blocklist.setToken(token);
   }
 }
