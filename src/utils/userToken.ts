@@ -17,9 +17,9 @@ interface RefreshToken {
 }
 
 export class UserToken {
-  static generateToken(userId: string): string | boolean {
+  static generateToken(userId: string): string {
     const token = jwt.sign({ userId }, config.secretkey, {
-      expiresIn: "15m",
+      expiresIn: "1m",
     });
     return token;
   }
@@ -42,7 +42,9 @@ export class UserToken {
     return { refreshToken, expirationDate };
   }
 
-  static async verifyRefreshToken(refreshToken: string): Promise<string> {
+  static async verifyRefreshToken(
+    refreshToken: string
+  ): Promise<{ token: string; userId: string }> {
     if (!refreshToken) {
       throw new InvalidToken("Refresh Token não informado");
     }
@@ -52,7 +54,9 @@ export class UserToken {
       throw new InvalidToken("Refresh Token inválido");
     }
 
-    return userId;
+    const token = this.generateToken(userId);
+
+    return { userId, token };
   }
 
   static async deleteRefreshToken(refreshToken: string): Promise<void> {

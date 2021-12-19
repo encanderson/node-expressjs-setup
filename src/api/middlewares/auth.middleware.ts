@@ -68,7 +68,9 @@ export class AuthMiddleware {
     try {
       const { refreshToken } = req.body;
 
-      const userId = await UserToken.verifyRefreshToken(refreshToken);
+      const { userId, token } = await UserToken.verifyRefreshToken(
+        refreshToken
+      );
 
       const user = await UserModel.getUser(userId);
 
@@ -77,6 +79,7 @@ export class AuthMiddleware {
       await UserToken.deleteRefreshToken(refreshToken);
 
       req.user = user;
+      req.user.token = token;
 
       next();
     } catch (err) {
