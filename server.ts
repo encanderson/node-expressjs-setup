@@ -5,7 +5,7 @@ import { App } from "./src/app";
 
 import { config } from "./src/config";
 
-require("./src/redis");
+require("./src/api/subscribers");
 class Server {
   httpServer: http.Server;
   app: App;
@@ -14,13 +14,13 @@ class Server {
     this.app.start();
   }
 
-  start() {
+  start(PORT: number) {
     this.httpServer = http.createServer(this.app.app);
 
-    this.httpServer.listen(config.PORT, () => {
-      console.log(`Listening at ${config.PORT}`);
+    this.httpServer.listen(PORT, () => {
+      console.log(`Listening at ${PORT}`);
     });
   }
 }
 
-new Server().start();
+new Server().start(config.PORT);
