@@ -1,19 +1,39 @@
-import { transporter, config } from "@src/config";
+import nodemailer from "nodemailer";
 
-export const sendCode = async (email: string, code: number): Promise<void> => {
+import { config, createEmailSettings } from "@src/config";
+
+interface MailOptions {
+  from: string;
+  to: string;
+  subject: string;
+  html: string;
+}
+
+const createTransporter = async (mailOptions: MailOptions): Promise<void> => {
+  const settingsEmail = await createEmailSettings();
+  const transporter = nodemailer.createTransport(settingsEmail);
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      console.log(error);
+    } else {
+      if (process.env.NODE_ENV !== "production") {
+        console.log("URL: " + nodemailer.getTestMessageUrl(info));
+      }
+    }
+  });
+};
+
+export const sendEmail = async (
+  email: string,
+  subject: string,
+  html: string
+): Promise<void> => {
   const mailOptions = {
     from: config.emailUser,
     to: email,
-    subject: "Código de confirmação",
-    html: `<h1>Código de verificação:</h1><p>${code}</p>`,
+    subject: subject,
+    html: html,
   };
-  transporter.sendMail(mailOptions, function (error, info) {
-    if (error) {
-      console.log(error);
-      return false;
-    } else {
-      console.log(info.response);
-      return code;
-    }
-  });
+
+  await createTransporter(mailOptions);
 };

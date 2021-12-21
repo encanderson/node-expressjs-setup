@@ -2,9 +2,10 @@ import { UserModel } from "../repositories";
 
 import { NotAuthenticate } from "@src/api/errors";
 
-import { sendCode } from "../subscribers";
+import { sendEmail } from "../subscribers";
 import { generateCode } from "@src/helpers";
 import { Blocklist, managerAllowlist } from "../subscribers";
+import { htmlCode } from "../../config";
 
 export class AuthServices {
   static async recoveryPassword(email: string): Promise<void> {
@@ -12,7 +13,7 @@ export class AuthServices {
 
     const user = await UserModel.recoveryPassword(email, code);
 
-    await sendCode(user.email, code);
+    await sendEmail(user.email, "Código de Verificação", htmlCode(code));
   }
   static async checkUser(email: string, code: number): Promise<unknown> {
     const user = await UserModel.checkUser(email);

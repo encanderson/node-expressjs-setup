@@ -4,7 +4,7 @@ import { InvalidToken } from "@src/api/errors";
 
 import { config } from "@src/config";
 
-interface DataStoredInToken {
+interface Payload {
   userId: string;
 }
 
@@ -18,7 +18,7 @@ export class AccessToken {
 
   static verifyToken(token: string): string {
     try {
-      const verify = jwt.verify(token, config.secretkey) as DataStoredInToken;
+      const verify = jwt.verify(token, config.secretkey) as Payload;
 
       return verify.userId;
     } catch (err) {
