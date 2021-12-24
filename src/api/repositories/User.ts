@@ -1,19 +1,19 @@
 import { PrismaClient } from "@prisma/client";
 import * as bcrypt from "bcrypt";
 
-import { User as UserType } from "@src/types";
+import { User } from "@src/types";
 
 import { UserExist, NotFound } from "@src/api/errors";
 
 const prisma = new PrismaClient();
 
-export class UserModel {
+export class UserRepository {
   createdAt: Date;
   updatedAt: Date;
   password: string;
-  user: UserType;
+  user: User;
   date: Date;
-  constructor(user: UserType) {
+  constructor(user: User) {
     this.date = new Date();
     this.password = user.password;
     this.createdAt = this.date;
@@ -21,19 +21,23 @@ export class UserModel {
     this.user = user;
   }
 
-  async createUser(): Promise<void> {
-    this.user.password = await UserModel.hashPassword(this.password);
-    await prisma.userModel.create({
+  async createUser(code: number): Promise<void> {
+    this.user.password = await UserRepository.hashPassword(this.password);
+    await prisma.user.create({
       data: {
-        ...this.user,
+        active: false,
+        name: this.user.name,
+        email: this.user.email,
+        code: code,
+        password: this.user.password,
         createdAt: this.createdAt,
         updatedAt: this.updatedAt,
       },
     });
   }
 
-  static async getUser(email: string): Promise<UserType> {
-    const user = await prisma.userModel.findUnique({
+  static async getUser(email: string): Promise<User> {
+    const user = await prisma.user.findUnique({
       where: {
         email: email,
       },
@@ -51,8 +55,8 @@ export class UserModel {
     return user;
   }
 
-  static async searchByEmail(newUser: UserType): Promise<UserModel> {
-    const user = await prisma.userModel.findUnique({
+  static async searchByEmail(newUser: User): Promise<UserRepository> {
+    const user = await prisma.user.findUnique({
       where: {
         email: newUser.email,
       },
@@ -61,7 +65,7 @@ export class UserModel {
     if (user) {
       throw new UserExist(newUser.name);
     }
-    return new UserModel(newUser);
+    return new UserRepository(newUser);
   }
 
   static async hashPassword(password: string): Promise<string> {
@@ -74,7 +78,7 @@ export class UserModel {
     email: string,
     code: number
   ): Promise<{ email: string; name: string }> {
-    const user = await prisma.userModel.findUnique({
+    const user = await prisma.user.findUnique({
       where: {
         email: email,
       },
@@ -84,7 +88,7 @@ export class UserModel {
       },
     });
     if (user) {
-      await prisma.userModel.update({
+      await prisma.user.update({
         where: {
           email: user.email,
         },
@@ -99,7 +103,7 @@ export class UserModel {
   }
 
   static async checkUser(email: string): Promise<{ code: number }> {
-    const user = await prisma.userModel.findUnique({
+    const user = await prisma.user.findUnique({
       where: {
         email: email,
       },
@@ -110,19 +114,19 @@ export class UserModel {
     return user;
   }
 
-  static async update(
-    email: string,
-    data: { password: string }
-  ): Promise<void> {
+  static async update(email: string, data: User): Promise<void> {
     if (data.password) {
-      data.password = await UserModel.hashPassword(data.password);
+      data.password = await UserRepository.hashPassword(data.password);
     }
     try {
-      await prisma.userModel.update({
+      await prisma.user.update({
         where: {
           email: email,
         },
-        data: data,
+        data: {
+          ...data,
+          updatedAt: new Date(),
+        },
       });
     } catch (err) {
       throw new NotFound("Usuário");

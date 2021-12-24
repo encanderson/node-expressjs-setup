@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import passport from "passport";
 
-import { UserModel } from "@src/api/repositories";
+import { UserRepository } from "@src/api/repositories";
 import { RefreshToken, AccessToken } from "@src/utils";
 import { NotAuthenticate } from "../errors";
 
@@ -70,7 +70,7 @@ export class AuthMiddleware {
 
       const { userId, token } = await RefreshToken.verifyToken(refreshToken);
 
-      const user = await UserModel.getUser(userId);
+      const user = await UserRepository.getUser(userId);
 
       delete user.password;
 
