@@ -1,3 +1,3 @@
-export * from "./users.services";
-export * from "./auth.services";
+export * from "./UsersServices";
+export * from "./AuthServices";
 export * from "./passport.services";

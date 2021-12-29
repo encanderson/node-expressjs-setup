@@ -7,8 +7,9 @@ import {
   NotAuthenticate,
   InvalidToken,
   InvalidField,
+  Forbideen,
 } from "../errors";
-import { ErrorType } from "@src/types/error";
+import { ErrorType } from "@src/@types/error";
 
 export const errorMiddleware = (app: express.Application): void => {
   app.use(
@@ -34,6 +35,10 @@ export const errorMiddleware = (app: express.Application): void => {
 
       if (error instanceof InvalidField) {
         status = 400;
+      }
+
+      if (error instanceof Forbideen) {
+        status = 403;
       }
 
       res.status(status).send({

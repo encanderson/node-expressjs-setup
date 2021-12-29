@@ -1,3 +1,3 @@
 export * from "./docs.controllers";
-export * from "./users.controllers";
-export * from "./auth.controllers";
+export * from "./UsersControllers";
+export * from "./AuthControllers";

@@ -1,6 +1,6 @@
-import { ServerSetup } from "./src/server";
+import { ServerSetup } from "./server";
 
-import { config } from "./src/config";
+import { config } from "./config";
 
 (async (): Promise<void> => {
   try {

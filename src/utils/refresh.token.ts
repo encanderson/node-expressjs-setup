@@ -4,8 +4,6 @@ import moment from "moment";
 import { InvalidToken } from "@src/api/errors";
 import { managerAllowlist } from "../api/subscribers";
 
-import { AccessToken } from ".";
-
 interface RefreshData {
   refreshToken: string;
   expirationDate: number;
@@ -20,9 +18,7 @@ export class RefreshToken {
     return { refreshToken, expirationDate };
   }
 
-  static async verifyToken(
-    refreshToken: string
-  ): Promise<{ token: string; userId: string }> {
+  static async verifyToken(refreshToken: string): Promise<{ userId: string }> {
     if (!refreshToken) {
       throw new InvalidToken("Refresh Token não informado");
     }
@@ -32,12 +28,11 @@ export class RefreshToken {
       throw new InvalidToken("Refresh Token inválido");
     }
 
-    const token = AccessToken.generateToken(userId, "15m");
-
-    return { userId, token };
+    return { userId };
   }
 
   static async deleteToken(refreshToken: string): Promise<void> {
     await managerAllowlist.delete(refreshToken);
   }
 }
+// userId, "15m"

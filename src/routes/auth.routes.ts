@@ -14,6 +14,6 @@ router.post(
 );
 router.post("/confirm-user", AuthController.confirmUser);
 router.post("/recovery-password", AuthController.recoveryPassword);
-router.post("/check-user", AuthController.checkUser);
+router.post("/check-user/:token", AuthController.checkUser);
 router.put("/recovery-password/:token", AuthController.changePassword);
 router.post("/logout", AuthMiddleware.authenticate, AuthController.logout);

@@ -7,8 +7,8 @@
   "license": "MIT",
   "scripts": {
     "build": "babel src --extensions \".js,.ts\" --out-dir dist --copy-files --no-copy-ignored",
-    "start": "node dist/server.js",
-    "dev": "ts-node-dev -r tsconfig-paths/register --respawn --transpile-only --ignore-watch node_modules --no-notify --exit-child index.ts | pino-pretty -c",
+    "start": "node dist/index.js",
+    "dev": "ts-node-dev -r tsconfig-paths/register --respawn --transpile-only --ignore-watch node_modules --no-notify --exit-child src/index.ts | pino-pretty -c",
     "test": "jest",
     "commit": "git-cz"
   },
@@ -54,6 +54,7 @@
   },
   "dependencies": {
     "@prisma/client": "3.0.2",
+    "accesscontrol": "^2.2.1",
     "bcrypt": "^5.0.1",
     "cors": "^2.8.5",
     "crypto": "^1.0.1",

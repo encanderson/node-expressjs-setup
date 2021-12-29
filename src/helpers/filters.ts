@@ -2,7 +2,7 @@
 
 import { InvalidField } from "../api/errors";
 
-import { User } from "@src/types";
+import { User } from "@src/@types";
 
 export const filterObject = (obj: unknown, keys: string[]): unknown => {
   const newObject = {};

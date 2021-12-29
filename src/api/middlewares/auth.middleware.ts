@@ -3,7 +3,7 @@ import passport from "passport";
 
 import { UserRepository } from "@src/api/repositories";
 import { RefreshToken, AccessToken } from "@src/utils";
-import { NotAuthenticate } from "../errors";
+import { InvalidToken } from "../errors";
 
 export class AuthMiddleware {
   static async signIn(
@@ -15,6 +15,9 @@ export class AuthMiddleware {
       if (error && error.name === "NotAuthenticate") {
         return res.status(401).send({ message: error.message });
       }
+      if (error && error.name === "NotFound") {
+        return res.status(401).send({ message: error.message });
+      }
       if (error) {
         return res.status(500).send({ message: error.message });
       }
@@ -22,7 +25,11 @@ export class AuthMiddleware {
         return res.status(401).send({ message: info });
       }
 
-      const token = AccessToken.generateToken(user.email, "15m");
+      const token = AccessToken.generateToken({
+        userId: user.email,
+        expires: "15m",
+        app: user.app,
+      });
       req.user = {
         ...user,
         token,
@@ -36,28 +43,41 @@ export class AuthMiddleware {
     res: Response,
     next: NextFunction
   ): Promise<void> {
-    passport.authenticate(
-      "bearer",
-      { session: false },
-      (error, userId, token) => {
-        if (error && error.name === "InvalidToken") {
-          return res.status(401).send({ message: error.message });
-        }
-        if (error) {
-          return res.status(500).send({ message: error.message });
-        }
+    try {
+      passport.authenticate(
+        "bearer",
+        { session: false },
+        (error, payload, token) => {
+          if (!payload) {
+            return res.status(401).send({
+              message: new InvalidToken("Token ou Refresh Token Inválido")
+                .message,
+            });
+          }
 
-        if (!userId) {
-          throw new NotAuthenticate("Token");
-        }
+          if (error && error.name === "InvalidToken") {
+            return res.status(401).send({ message: error.message });
+          }
 
-        req.user = {
-          userId,
-          token,
-        };
-        next();
-      }
-    )(req, res, next);
+          if (error && error.name === "NotFound") {
+            return res.status(401).send({ message: error.message });
+          }
+
+          if (error) {
+            return res.status(500).send({ message: error.message });
+          }
+
+          req.user = {
+            userId: payload.userId,
+            token,
+            app: payload.app,
+          };
+          next();
+        }
+      )(req, res, next);
+    } catch (err) {
+      next(err);
+    }
   }
 
   static async refreshToken(
@@ -68,11 +88,17 @@ export class AuthMiddleware {
     try {
       const { refreshToken } = req.body;
 
-      const { userId, token } = await RefreshToken.verifyToken(refreshToken);
+      const { userId } = await RefreshToken.verifyToken(refreshToken);
 
       const user = await UserRepository.getUser(userId);
 
       delete user.password;
+
+      const token = AccessToken.generateToken({
+        userId: userId,
+        expires: "15m",
+        app: user.app,
+      });
 
       await RefreshToken.deleteToken(refreshToken);
 

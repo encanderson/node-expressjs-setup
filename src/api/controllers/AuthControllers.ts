@@ -35,10 +35,11 @@ export class AuthController {
     next: NextFunction
   ): Promise<void> {
     try {
-      const email = req.body.email;
-      await AuthServices.recoveryPassword(email);
+      const userId = req.body.email;
+      const token = await AuthServices.recoveryPassword(userId);
       res.status(200).send({
         message: "Verifique o seu email!",
+        token: token,
       });
     } catch (err) {
       next(err);
@@ -52,8 +53,8 @@ export class AuthController {
   ): Promise<void> {
     try {
       const code = Number(req.body.code);
-      const email = req.body.email;
-      const token = await AuthServices.checkUser(email, code);
+      const tokenId = req.params.token;
+      const token = await AuthServices.checkUser(tokenId, code);
 
       res.status(200).send({
         token: token,
@@ -70,10 +71,10 @@ export class AuthController {
   ): Promise<void> {
     try {
       const code = Number(req.body.code);
-      const email = req.body.email;
-      await AuthServices.confirmUser(email, code);
+      const token = req.body.token;
+      await AuthServices.confirmUser(token, code);
 
-      res.status(200).send({
+      res.status(202).send({
         message: "Usuário reconhecido",
       });
     } catch (err) {

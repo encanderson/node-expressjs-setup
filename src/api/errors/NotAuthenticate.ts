@@ -1,7 +1,7 @@
 export class NotAuthenticate extends Error {
   idError: number;
-  constructor(field: string) {
-    super(`${field} não corresponde.`);
+  constructor(msg: string) {
+    super(msg);
     this.name = "NotAuthenticate";
     this.idError = 4;
   }

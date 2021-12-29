@@ -6,7 +6,9 @@ import { managerList } from "@src/redis";
 import { hashFunction } from "@src/utils";
 import { InvalidToken } from "../errors";
 
-const blocklist = redis.createClient({ prefix: "blocklist-access-token:" });
+const blocklist = redis.createClient({
+  prefix: "blocklist-access-token:",
+});
 
 const managerBlocklist = managerList(blocklist);
 

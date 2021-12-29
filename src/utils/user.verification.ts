@@ -1,15 +1,15 @@
 import * as bcrypt from "bcrypt";
 
-import { NotAuthenticate } from "@src/api/errors";
+import { NotAuthenticate, NotFound } from "@src/api/errors";
 
 import { UserRepository } from "@src/api/repositories";
-import { User } from "@src/types";
+import { User } from "@src/@types";
 
 export class UserVerification {
   static async verifyUser(email: string): Promise<User> {
     const user = await UserRepository.getUser(email);
     if (!user) {
-      throw new NotAuthenticate("Usuário");
+      throw new NotFound("Usuário");
     }
     return user;
   }
@@ -20,7 +20,7 @@ export class UserVerification {
   ): Promise<void> {
     const validPassword = await bcrypt.compare(password, hashPassword);
     if (!validPassword) {
-      throw new NotAuthenticate("Senha");
+      throw new NotAuthenticate("Senha inválida.");
     }
   }
 }

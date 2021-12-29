@@ -6,21 +6,30 @@ import { config } from "@src/config";
 
 interface Payload {
   userId: string;
+  app: string;
 }
 
 export class AccessToken {
-  static generateToken(userId: string, expires: string): string {
-    const token = jwt.sign({ userId }, config.secretkey, {
-      expiresIn: expires,
-    });
+  static generateToken(data: {
+    userId: string;
+    expires: string;
+    app: string;
+  }): string {
+    const token = jwt.sign(
+      { userId: data.userId, app: data.app },
+      config.secretkey,
+      {
+        expiresIn: data.expires,
+      }
+    );
     return token;
   }
 
-  static verifyToken(token: string): string {
+  static verifyToken(token: string): Payload {
     try {
-      const verify = jwt.verify(token, config.secretkey) as Payload;
+      const payload = jwt.verify(token, config.secretkey) as Payload;
 
-      return verify.userId;
+      return payload;
     } catch (err) {
       throw new InvalidToken("Token Inválido");
     }

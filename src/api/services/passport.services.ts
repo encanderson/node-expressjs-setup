@@ -34,8 +34,8 @@ passport.use(
   new BearerStrategy(async (token, done) => {
     try {
       await Blocklist.verifyToken(token);
-      const userId = AccessToken.verifyToken(token);
-      done(null, userId, token);
+      const payload = AccessToken.verifyToken(token);
+      done(null, payload, token);
     } catch (err) {
       done(err);
     }

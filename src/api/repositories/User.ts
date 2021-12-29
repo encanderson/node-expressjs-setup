@@ -1,9 +1,11 @@
 import { PrismaClient } from "@prisma/client";
 import * as bcrypt from "bcrypt";
 
-import { User } from "@src/types";
+import { User } from "@src/@types";
 
 import { UserExist, NotFound } from "@src/api/errors";
+
+import { hashFunction } from "../../utils";
 
 const prisma = new PrismaClient();
 
@@ -26,12 +28,19 @@ export class UserRepository {
     await prisma.user.create({
       data: {
         active: false,
-        name: this.user.name,
+        app: this.user.app,
+        profession: this.user.profession,
+        userId: hashFunction(this.user.cpf),
         email: this.user.email,
         code: code,
         password: this.user.password,
         createdAt: this.createdAt,
         updatedAt: this.updatedAt,
+        profile: {
+          create: {
+            name: this.user.name,
+          },
+        },
       },
     });
   }
@@ -43,9 +52,10 @@ export class UserRepository {
       },
       select: {
         id: true,
+        userId: true,
         email: true,
-        name: true,
         password: true,
+        app: true,
       },
     });
     if (!user) {
@@ -59,6 +69,9 @@ export class UserRepository {
     const user = await prisma.user.findUnique({
       where: {
         email: newUser.email,
+      },
+      select: {
+        app: true,
       },
     });
 
@@ -75,16 +88,21 @@ export class UserRepository {
   }
 
   static async recoveryPassword(
-    email: string,
+    userId: string,
     code: number
-  ): Promise<{ email: string; name: string }> {
+  ): Promise<{ email: string; app: string }> {
     const user = await prisma.user.findUnique({
       where: {
-        email: email,
+        email: userId,
       },
       select: {
         email: true,
-        name: true,
+        app: true,
+        profile: {
+          select: {
+            name: true,
+          },
+        },
       },
     });
     if (user) {
@@ -102,26 +120,29 @@ export class UserRepository {
     }
   }
 
-  static async checkUser(email: string): Promise<{ code: number }> {
+  static async checkUser(
+    userId: string
+  ): Promise<{ code: number; app: string }> {
     const user = await prisma.user.findUnique({
       where: {
-        email: email,
+        email: userId,
       },
       select: {
         code: true,
+        app: true,
       },
     });
     return user;
   }
 
-  static async update(email: string, data: User): Promise<void> {
+  static async update(userId: string, data: User): Promise<void> {
     if (data.password) {
       data.password = await UserRepository.hashPassword(data.password);
     }
     try {
       await prisma.user.update({
         where: {
-          email: email,
+          email: userId,
         },
         data: {
           ...data,

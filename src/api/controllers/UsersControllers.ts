@@ -10,9 +10,10 @@ export class UsersController {
   ): Promise<void> {
     try {
       const user = req.body;
-      await UsersServices.createUser(user);
+      const token = await UsersServices.createUser(user);
       res.status(201).send({
-        message: `Seja bem vindo ${user.name}`,
+        message: `Seja bem vindo ${user.name}, verifique o seu email.`,
+        token: token,
       });
     } catch (error) {
       next(error);
